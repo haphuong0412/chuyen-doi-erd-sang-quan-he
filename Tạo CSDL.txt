@@ -1,0 +1,75 @@
+-- Tạo CSDL
+CREATE DATABASE QuanLyVatTu;
+USE QuanLyVatTu;
+
+-- 1. Bảng Nhà Cung Cấp
+CREATE TABLE NHACC (
+    MaNCC VARCHAR(20) PRIMARY KEY,
+    TenNCC VARCHAR(100),
+    DiaChi VARCHAR(200)
+);
+
+-- 2. Bảng Số Điện Thoại Nhà Cung Cấp (Thuộc tính đa trị)
+CREATE TABLE NHACC_SDT (
+    MaNCC VARCHAR(20),
+    SBT VARCHAR(20),
+    PRIMARY KEY (MaNCC, SBT),
+    FOREIGN KEY (MaNCC) REFERENCES NHACC(MaNCC)
+);
+
+-- 3. Bảng Đơn Đặt Hàng
+CREATE TABLE DONDH (
+    SoDH VARCHAR(20) PRIMARY KEY,
+    NgayDH DATETIME,
+    MaNCC VARCHAR(20),
+    FOREIGN KEY (MaNCC) REFERENCES NHACC(MaNCC)
+);
+
+-- 4. Bảng Vật Tư
+CREATE TABLE VATTU (
+    MaVTu VARCHAR(20) PRIMARY KEY,
+    TenVTu VARCHAR(100),
+    DGNhap DECIMAL(18,2),
+    SLNhap INT
+);
+
+-- 5. Bảng Phiếu Xuất
+CREATE TABLE PHIEUXUAT (
+    SoPX VARCHAR(20) PRIMARY KEY,
+    NgayXuat DATETIME
+);
+
+-- 6. Bảng Phiếu Nhập
+CREATE TABLE PHIEUNHAP (
+    SoPN VARCHAR(20) PRIMARY KEY,
+    NgayNhap DATETIME
+);
+
+-- 7. Bảng Chi Tiết Phiếu Xuất (Nối PHIEUXUAT và VATTU)
+CREATE TABLE ChiTietPhieuXuat (
+    SoPX VARCHAR(20),
+    MaVTu VARCHAR(20),
+    DGXuat DECIMAL(18,2),
+    SLXuat INT,
+    PRIMARY KEY (SoPX, MaVTu),
+    FOREIGN KEY (SoPX) REFERENCES PHIEUXUAT(SoPX),
+    FOREIGN KEY (MaVTu) REFERENCES VATTU(MaVTu)
+);
+
+-- 8. Bảng Chi Tiết Phiếu Nhập (Nối PHIEUNHAP và VATTU)
+CREATE TABLE ChiTietPhieuNhap (
+    SoPN VARCHAR(20),
+    MaVTu VARCHAR(20),
+    PRIMARY KEY (SoPN, MaVTu),
+    FOREIGN KEY (SoPN) REFERENCES PHIEUNHAP(SoPN),
+    FOREIGN KEY (MaVTu) REFERENCES VATTU(MaVTu)
+);
+
+-- 9. Bảng Chi Tiết Đơn Đặt Hàng (Nối DONDH và VATTU)
+CREATE TABLE ChiTietDonDatHang (
+    SoDH VARCHAR(20),
+    MaVTu VARCHAR(20),
+    PRIMARY KEY (SoDH, MaVTu),
+    FOREIGN KEY (SoDH) REFERENCES DONDH(SoDH),
+    FOREIGN KEY (MaVTu) REFERENCES VATTU(MaVTu)
+);
